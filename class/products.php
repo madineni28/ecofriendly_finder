@@ -22,6 +22,17 @@ class Product {
 		return $data;
 	}
 	
+	private function executeAction($sqlQuery, $params = []) {
+        $statement = $this->dbConnect->prepare($sqlQuery);
+        try {
+            $statement->execute($params);
+            return $statement->rowCount();
+        } catch (PDOException $e) {
+            // Optionally log this error to a file or a logging system
+            die('Database error: ' . $e->getMessage());
+        }
+    }
+	
 	private function getRecords($sqlQuery) {
 		
 		$statement = $this->dbConnect->prepare($sqlQuery);
@@ -41,14 +52,14 @@ class Product {
 							products.description,
 							products.product_price,
 							products.business_id,
-							products.category_id,
+							categories.name,
 							products.created_at,
-						   images.img_name,
-						   images.img_price,
 						   images.img_url
 								FROM products
 								JOIN images
-								ON images.product_id = products.product_id";
+								ON images.product_id = products.product_id
+								JOIN categories
+								ON categories.category_id = products.category_id";
 
       	return  $this->getData($sqlQuery);
 	}
@@ -64,8 +75,6 @@ class Product {
 							products.business_id,
 							products.category_id,
 							products.created_at,
-						   images.img_name,
-						   images.img_price,
 						   images.img_url
 								FROM products
 								JOIN businesses
@@ -96,12 +105,78 @@ class Product {
 	
 	public function getOrderedProduct($customer_id){
 
-			$sqlQuery = "SELECT products.product_id,products.name,products.product_price,images.img_url,orders.order_date,orders.cost_total FROM products JOIN images ON images.product_id = products.product_id  JOIN order_details ON order_details.product_id = products.product_id JOIN  orders ON  order_details.order_id = orders.order_id WHERE orders.user_id = '".$customer_id."' ";
+			$sqlQuery = "SELECT products.product_id,products.name,products.product_price,images.img_url,orders.order_date,orders.cost_total,order_details.quantity,order_details.order_details_id,orders.order_date FROM products JOIN images ON images.product_id = products.product_id JOIN order_details ON order_details.product_id = products.product_id JOIN orders ON  order_details.order_id = orders.order_id WHERE orders.user_id = '".$customer_id."' ";
+
+      	return  $this->getData($sqlQuery);
+	}
+	
+	public function getOders(){
+
+			$sqlQuery = "SELECT products.product_id,products.name,products.product_price,images.img_url,orders.order_date,orders.cost_total,order_details.quantity,order_details.order_details_id,orders.order_date FROM products JOIN images ON images.product_id = products.product_id JOIN order_details ON order_details.product_id = products.product_id JOIN orders ON  order_details.order_id = orders.order_id ORDER BY orders.order_date DESC ";
 
       	return  $this->getData($sqlQuery);
 	}
 	
 	
+	public function addProduct($product_id, $business_id, $category_id, $product_name, $product_price, $description) {
+		
+		
+		$sqlQuery = "INSERT INTO products(product_id , name, description, product_price, business_id , category_id ) VALUE(?,?,?,?,?,?)";
+
+      	$this->executeAction($sqlQuery, [$product_id, $product_name, $description, $product_price, $business_id , $category_id ]);
+		
+	}
 	
+	public function reviewProduct($product_id, $user_id, $rate, $comment){
+	
+		$sqlQuery = "INSERT INTO reviews(user_id, product_id, rating, comment) VALUE(?,?,?,?)";
+
+      	$this->executeAction($sqlQuery, [$user_id, $product_id, $rate, $comment]);
+		
+	}	
+		
+		
+	public function addImage($product_id, $path_filename_ext) {
+		
+		
+		$sqlQuery = "INSERT INTO images(product_id , img_ur ) VALUE(?,?)";
+
+      	$this->executeAction($sqlQuery, [$product_id, $path_filename_ext ]);
+		
+	}	
+	
+	
+	public function removeProductImage($product_id){
+		
+		// Insert into the database
+		$sqlQuery = "DELETE FROM images WHERE product_id = ?";
+    
+		$this->executeAction($sqlQuery, [$product_id]);
+	
+	}
+	
+	public function removeProduct($product_id){
+		
+		// Insert into the database
+		$sqlQuery = "DELETE FROM products WHERE product_id = ?";
+    
+		$this->executeAction($sqlQuery, [$product_id]);
+	
+	}
+
+
+	public function checkIfReviewed($product_id,$user_id){
+
+			$sqlQuery = "SELECT review_id FROM reviews WHERE user_id = '".$user_id."' AND product_id = '".$product_id."'";
+
+      	return  $this->getRecords($sqlQuery);
+	}
+	
+	public function getRatings($product_id){
+
+			$sqlQuery = "SELECT rating, comment, created_at FROM reviews WHERE product_id = '".$product_id."' GROUP BY product_id";
+
+      	return  $this->getData($sqlQuery);
+	}
 }
 ?>

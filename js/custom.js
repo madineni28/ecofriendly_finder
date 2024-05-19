@@ -190,11 +190,137 @@ jQuery(document).ready(function ($) {
 			$('#response').html(data.message);
 
 
-			window.location = "../download/";
+			window.location = "../orders/";
 		}
 	
    }
   });  
  });
  
+ $(document).on('submit', '#admin_login', function(event){
+
+	
+  event.preventDefault();
+  
+  var form_data = $(this).serialize();
+
+  $.ajax({
+   url:"login.php",
+   method:"POST",
+   data:form_data,
+   dataType:"json",
+   success:function(data) { 
+		if(data.error != '') {
+
+			$('#response').html(data.error);
+
+
+		} else {
+
+
+			$('#response').html(data.message);
+
+
+			window.location = "../admin/add-business/";
+		}
+	
+   }
+  });  
+ });
+  $('#review_product').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '../review/review_product.php',  // Change this to the path of your PHP script
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                $('#message').html('<div class="alert alert-success"><strong>Success!</strong> Product rated successfully!</div>');
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+ 
+ $('#add_business').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '../add-business/add_business.php',  // Change this to the path of your PHP script
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                $('#message').html('<div class="alert alert-success"><strong>Success!</strong> Business added successfully!</div>');
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+	
+	$('#add_product').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '../add-product/add_product.php',
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+				$('#message').html('<div class="alert alert-success"><strong>Success!</strong> Product added successfully!</div>');
+                //console.log(data);
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+	
+	
+ 
 });		
+
+function remove_from_product(product_id){
+
+	$.ajax({
+	url:"../products/remove_from_products.php",
+		method:"POST",
+		data:{'product_id': product_id},
+		dataType:"json",
+		success:function(data) {
+			$('#message').html('<div class="alert alert-success"><strong>Success!</strong> Product removed successfully!</div>');
+		}
+	});  
+}
+
+function remove_from_business(business_id){
+
+	$.ajax({
+	url:"../businesses/remove_from_businesses.php",
+		method:"POST",
+		data:{'business_id': business_id},
+		dataType:"json",
+		success:function(data) {
+			$('#message').html('<div class="alert alert-success"><strong>Success!</strong> Business removed successfully!</div>');
+		}
+	});  
+}
+
+function remove_customer(user_id){
+	//alert(user_id);
+	$.ajax({
+	url:"../customers/remove_customer.php",
+		method:"POST",
+		data:{'user_id': user_id},
+		dataType:"json",
+		success:function(data) {
+			//alert(user_id);
+			$('#message').html('<div class="alert alert-success"><strong>Success!</strong> Customer removed successfully!</div>');
+		}
+	});  
+}

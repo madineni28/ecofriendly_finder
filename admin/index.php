@@ -2,9 +2,9 @@
 ob_start();
 	session_start();
 	
-	if(!empty($_COOKIE['rahukLogin'])){
+	if(!empty($_COOKIE['adminLogin'])){
         
-		header("location:../orders/");
+		header("location:../add-business/");
 		
 	}
 		
@@ -19,10 +19,7 @@ ob_start();
 	$cart = new Cart($database);
 	$customer = new Customer($database);
 	
-	
-	$session_id = session_id();
-	
-	$number_of_products = $cart->productInCart($session_id);
+
 	
 
 	$path = "../";
@@ -40,7 +37,7 @@ $page = 'login';
 
   <meta name="description" content="" />
   <meta name="keywords" content="bootstrap, bootstrap4" />
-		<title>Login :: Ecofriendly </title>	
+		<title>Admin Login :: Ecofriendly </title>	
 		<!-- Bootstrap CSS -->
 		<link href="<?php echo $path; ?>css/bootstrap.min.css" rel="stylesheet">
 		
@@ -50,7 +47,7 @@ $page = 'login';
 
 	<body>
 
-		<?php include("../nav/nav.php"); ?>
+		<?php //include("../nav/nav.php"); ?>
 
 		
 
@@ -58,25 +55,25 @@ $page = 'login';
 		    <div class="container">
 		     
 			 
-		      <div class="row" style="margin-top:20px">
+		      <div class="row" style="margin:auto;">
 		        <div class="col-md-6 mb-5 mb-md-0">
-		          <h2 class="h3 mb-3 text-black">Login</h2>
+		          <h2 class="h3 mb-3 text-black">Admin Login</h2>
 		          <div class="p-3 p-lg-5 border bg-white">
-		             <form class="col-md-12" method="post" id="login">
+		             <form class="col-md-12" method="post" id="admin_login">
 		            <div id="response"></div>
 		            <div class="form-group mb-5">
 		                <label for="email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
-		                <input type="text" class="form-control" id="email_address" name="email_address" value="" required >
+		                <input type="text" class="form-control" id="email_address" name="email_address" value="kingjonce@gmail.com" required >
 						<span id="mail_error"></span>
 		              
 		            </div>
 					<div class="form-group mb-5">
 		                <label for="account_password" class="text-black">Password <span class="text-danger">*</span></label>
-		                <input type="password" class="form-control" id="account_password" name="account_password" placeholder="" value="" required >
+		                <input type="password" class="form-control" id="account_password" name="account_password" placeholder="" value="13541545" required >
 					  <span id="pass_error"></span>
 		            </div>
 					<div class="form-group mb-5">
-		                  <input type="submit" class="btn btn-warning btn-sm py-3 btn-block" id="btn_checkout" value="Login" />
+		                  <input type="submit" class="btn btn-warning btn-sm py-3 btn-block" id="btn_admin_login" value="Login" />
 		                </div>
 					 </form>
 		          </div>

@@ -34,6 +34,17 @@ class Customer {
 		return $images;
 	}
 	
+	private function executeAction($sqlQuery, $params = []) {
+        $statement = $this->dbConnect->prepare($sqlQuery);
+        try {
+            $statement->execute($params);
+            return $statement->rowCount();
+        } catch (PDOException $e) {
+            // Optionally log this error to a file or a logging system
+            die('Database error: ' . $e->getMessage());
+        }
+    }
+	
 	public function register($user_id,$c_fname,$c_lname,$c_address,$c_state_country,$c_postal_zip,$c_email_address,$c_phone,$c_account_password){
 
 		$sqlQuery = "INSERT INTO users(user_id,first_name, last_name, address,state,zip_code,email,phone_number,password_hash) VALUE('".$user_id."','".$c_fname."','".$c_lname."','".$c_address."','".$c_state_country."','".$c_postal_zip."','".$c_email_address."','".$c_phone."','".$c_account_password."')";
@@ -63,6 +74,21 @@ class Customer {
 
       	return  $this->getData($sqlQuery);
 	}
+	
+	public function getCustomers(){
+
+			$sqlQuery = "SELECT * FROM users";
+
+      	return  $this->getData($sqlQuery);
+	}
+
+
+	public function removeCustomer($user_id) {
+		   
+			$sqlQuery = "DELETE FROM users WHERE user_id = ?";
+			
+			$this->executeAction($sqlQuery, [$user_id]);
+		}
 
 
 }

@@ -40,7 +40,7 @@ $page = 'shop';
 		
 		<link href="<?php echo $path; ?>css/style.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-		
+	<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.13/css/all.css'>	
 	</head>
 
 	<body>
@@ -71,6 +71,26 @@ $page = 'shop';
 						<div class="product-item" >
 							<img src="../images/<?php echo $img_url; ?>" class="img-fluid product-thumbnail">
 							<h3 class="product-title"><?php echo $name; ?></h3>
+							<br/>
+							<?php
+								$reviews = $product->getRatings($product_id);
+								
+								foreach ($reviews as $review){
+									
+									$fullStars = floor($review['rating']);
+									$halfStar = ($review['rating'] - $fullStars) >= 0.5 ? 1 : 0;
+									
+									for ($i = 0; $i < $fullStars; $i++) {
+										echo '<i class="fa fa-star" style="color: #c59b08;"></i>';
+									}
+									if ($halfStar) {
+										echo '<i class="fa fa-star-half" style="color: #c59b08;"></i>';
+									}
+									
+								}
+									?>
+							<br/>
+							<br/>
 							<strong class="product-price">£ <?php echo $product_price; ?></strong>
 							<input type="hidden" id="product_id " value="<?php echo $product_id ; ?>" />
 							<span class="icon-cross">
